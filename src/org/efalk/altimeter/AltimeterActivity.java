@@ -1,4 +1,7 @@
-// $Id$
+/**
+ * @file
+ * Main activity for altimeter application.
+ */
 
 package org.efalk.altimeter;
 
@@ -31,14 +34,9 @@ public class AltimeterActivity extends Activity implements SensorEventListener
     private Altimeter altimeter;
     private float kollsman = 1013.25f;	// mB
 
-    public static final int UNITS_FT = 0;
-    public static final int UNITS_M = 1;
-    public static final int UNITS_HG = 0;
-    public static final int UNITS_MB = 1;
-
     // User preferences
-    int altUnits = UNITS_FT;
-    int presUnits = UNITS_HG;
+    int altUnits = Altimeter.UNITS_FT;
+    int presUnits = Altimeter.UNITS_HG;
     boolean flingEnabled = true;
     int orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR;
 
@@ -62,13 +60,13 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 		recallPreferences(sp);
 	}
 
-	altimeter.setStep(altUnits == UNITS_FT ? 10 : 5);
-	altimeter.setScale(altUnits == UNITS_FT ? Altimeter.METER_FT : 1);
+	altimeter.setAltUnits(altUnits);
+	altimeter.setPresUnits(presUnits);
 
         sensorManager =
           (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
-	setKollsman(kollsman);
+	altimeter.setKollsman(kollsman);
     }
 
     @Override
@@ -165,12 +163,7 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 	 * item, you'll have to convert it from String.  You will also
 	 * have to store it as String or preferences activity will crash.
 	 */
-	int a = Integer.parseInt(sp.getString("altUnits", ""+altUnits));
-	if ( a != altUnits) {
-	    altUnits = a;
-	    altimeter.setStep(a == UNITS_FT ? 10 : 5);
-	    altimeter.setScale(a == UNITS_FT ? Altimeter.METER_FT : 1);
-	}
+	altUnits = Integer.parseInt(sp.getString("altUnits", ""+altUnits));
 	presUnits = Integer.parseInt(sp.getString("presUnits", ""+presUnits));
 	orientation = Integer.parseInt(sp.getString("orientation",
 	  ""+ActivityInfo.SCREEN_ORIENTATION_SENSOR));
@@ -266,42 +259,22 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 	    SharedPreferences sp =
 	      PreferenceManager.getDefaultSharedPreferences(this);
 	    updatePreferences(sp);
-	    setKollsman(kollsman);
+	    altimeter.setAltUnits(altUnits);
+	    altimeter.setPresUnits(presUnits);
 	    break;
 	  case MENU_KOLLSMAN:
 	    if (data != null) {
-		float f = data.getIntExtra("value", 0);
+		float f = data.getIntExtra("value", 1013);
 		if (f != 0) {
-		    if (presUnits == UNITS_HG)
+		    if (altUnits == Altimeter.UNITS_HG)
 			f *= .01 / Altimeter.HG_MB;
-		    setKollsman(f);
+		    altimeter.setKollsman(f);
 		}
 	    }
 	    break;
 	}
     }
 
-
-    /**
-     * Set kollsman value, in mb. This will be converted if needed before
-     * writing to altimeter.
-     */
-    private void setKollsman(float k) {
-	kollsman = k;
-	if (presUnits == UNITS_HG)
-	    k *= Altimeter.HG_MB;
-	altimeter.setKollsman(k);
-    }
-
-    /**
-     * Set pressure value, in mb. This will be converted if needed before
-     * writing to altimeter.
-     */
-    private void setPressure(float p, long now) {
-	if (presUnits == UNITS_HG)
-	    p *= Altimeter.HG_MB;
-	altimeter.setPressure(p, now);
-    }
 
 
     @Override
@@ -311,12 +284,12 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 	float k = altimeter.getKollsman();
 	float p = altimeter.getPressure();
 	float altConv = 1;
-	if (presUnits == UNITS_HG) {
-	    // Convert mulitiply by 100 for display purposes
-	    k *= 100;
-	    p *= 100;
+	if (presUnits == Altimeter.UNITS_HG) {
+	    // Convert to Hg and mulitiply by 100 for display purposes
+	    k *= Altimeter.HG_MB * 100;
+	    p *= Altimeter.HG_MB * 100;
 	}
-	if (altUnits == UNITS_FT)
+	if (altUnits == Altimeter.UNITS_FT)
 	    altConv = 1.0f/Altimeter.METER_FT;
 	Kollsman.launch(this, MENU_KOLLSMAN, (int)(k+.5), (int)(p+.5), altConv);
 	return true;
@@ -343,6 +316,6 @@ public class AltimeterActivity extends Activity implements SensorEventListener
     public void onAccuracyChanged(Sensor sensor, int arg1) { }
 
     public void onSensorChanged(SensorEvent event) {
-	setPressure(event.values[0], event.timestamp);
+	altimeter.setPressure(event.values[0], event.timestamp);
     }
 }

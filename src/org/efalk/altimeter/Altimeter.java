@@ -26,6 +26,11 @@ public class Altimeter extends View {
 
     private static final String TAG = AltimeterActivity.TAG;
 
+    public static final int UNITS_FT = 0;
+    public static final int UNITS_M = 1;
+    public static final int UNITS_HG = 0;
+    public static final int UNITS_MB = 1;
+
     public static final float SQRT2 = 1.41421356f;
     public static final float METER_FT = 3.2808399f;
     public static final float HG_MB = 29.92f/1013f;
@@ -40,16 +45,17 @@ public class Altimeter extends View {
     private int wid, hgt;
     private Activity ctx;
     private DisplayMetrics metrics;
+    private int presUnits = UNITS_HG;
+    private int altUnits = UNITS_FT;
     private float pressure = 1013;	// arbitrary
     private float kollsman = 1013;
     private float altitude = 0;		// meters
-    private float altScale = 1;		// convert meters to another unit
     private boolean inop = true;
     private Barometer barometer;
     private DecimalFormat fmt = new DecimalFormat("00.00");
     private float xc, yc;
     private float kx, ky, kw, kh, kp;	// Kollsman window
-    private float gx, gy, gw, gh;	// Gauge
+    private float gx, gy;	// Gauge
     private RectF rk;
     private Gauge gauge;
 
@@ -68,6 +74,24 @@ public class Altimeter extends View {
 	init(context);
     }
 
+    public void setPresUnits(int units) {
+	presUnits = units;
+    }
+
+    public void setAltUnits(int units) {
+	if (units != altUnits) {
+	    altUnits = units;
+	    gauge = new Gauge(0, 50000,
+	      units == UNITS_FT ? 10 : 5, lblPaint, true);
+	    gauge.setXY((int)gx, (int)gy);
+	}
+    }
+
+    /**
+     * Set barometric pressure.
+     * @param v    pressure, mB
+     * @param now  timestamp, ns
+     */
     public void setPressure(float v, long now) {
 	pressure = v;
 	altitude = barometer.p2aDamped(v, now);
@@ -75,6 +99,9 @@ public class Altimeter extends View {
 	invalidate();
     }
 
+    /**
+     * Set kollsman window value. v is in mB.
+     */
     public void setKollsman(float v) {
 	kollsman = v;
 	barometer.setKollsman(v);
@@ -112,15 +139,6 @@ public class Altimeter extends View {
 	barometer.setKollsman(kollsman);
     }
 
-    public void setStep(int step) {
-	gauge = new Gauge(0, 50000, step, lblPaint, true);
-	gauge.setXY((int)gx, (int)gy);
-    }
-
-    public void setScale(float scale) {
-	altScale = scale;
-    }
-
     @Override
     protected void onSizeChanged(int w, int h, int ow, int oh)
     {
@@ -135,8 +153,6 @@ public class Altimeter extends View {
 	kx = wid * KOLLSMAN_X;
 	ky = hgt * KOLLSMAN_Y;
 	rk = new RectF(kx - kw, ky - kh/2, kx, ky + kh/2);
-	gw = gauge.getWid();
-	gh = gauge.getHgt();
 	gx = wid * GAUGE_X;
 	gy = hgt * GAUGE_Y;
 	gauge.setXY((int)gx, (int)gy);
@@ -148,7 +164,8 @@ public class Altimeter extends View {
     {
 	super.onDraw(canvas);
 	float alt = altitude;
-	alt *= altScale;
+	if (altUnits == UNITS_FT)
+	    alt *= METER_FT;
 	gauge.setValue(alt);
 	gauge.draw(canvas);
 	drawKollsman(canvas);
@@ -165,10 +182,10 @@ public class Altimeter extends View {
 	String lbl;
 	float ts = paint.getTextSize();
 	paint.setTextSize(ts*1.5f);
-	if (kollsman > 100) {
+	if (presUnits == UNITS_MB) {
 	    lbl = "" + (int)kollsman;
 	} else {
-	    lbl = fmt.format(kollsman);
+	    lbl = fmt.format(kollsman * HG_MB);
 	}
 
 	paint.setColor(Color.BLACK);
