@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.efalk.altimeter.SquareLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+
+  <org.efalk.altimeter.Altimeter
+      android:id="@+id/altimeter"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:background="@drawable/altimeter"
+      />
+
+</org.efalk.altimeter.SquareLayout>

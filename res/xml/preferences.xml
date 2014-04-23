@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $Id: preferences.xml,v 1.3 2010-06-13 15:04:46 falk Exp $ -->
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <ListPreference
+    android:key="altUnits"
+    android:dialogTitle="@string/altUnits"
+    android:title="@string/altUnits"
+    android:entries="@array/altUnits_items"
+    android:entryValues="@array/altUnits_values" />
+  <ListPreference
+    android:key="presUnits"
+    android:dialogTitle="@string/presUnits"
+    android:title="@string/presUnits"
+    android:entries="@array/presUnits_items"
+    android:entryValues="@array/presUnits_values" />
+  <ListPreference
+    android:key="orientation"
+    android:dialogTitle="@string/orientation"
+    android:title="@string/orientation"
+    android:entries="@array/orientation_items"
+    android:entryValues="@array/orientation_values" />
+
+</PreferenceScreen>

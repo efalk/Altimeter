@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#448"
+    >
+
+  <view class="org.efalk.altimeter.Kollsman$KollsmanView"
+      android:id="@+id/kview"
+      android:background="@drawable/kollsman_bg"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      />
+
+  <Button
+      android:id="@+id/ok"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/ok" />
+
+</LinearLayout>

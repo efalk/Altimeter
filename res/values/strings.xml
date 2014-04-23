@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pressure Altimeter</string>
+    <string name="ok">Ok</string>
+    <string name="kollsman">Kollsman</string>
+    <string name="about">About</string>
+    <string name="preferences">Preferences</string>
+    <string name="altUnits">Altitude units</string>
+    <string name="presUnits">Pressure units</string>
+    <string name="orientation">Orientation</string>
+    <string name="auto">Auto</string>
+    <string name="portrait">Portrait</string>
+    <string name="landscape">Landscape</string>
+    <string name="seascape">Seascape</string>
+    <string name="feet">Feet</string>
+    <string name="meters">Meters</string>
+    <string name="hg">Inches mercury</string>
+    <string name="mb">Millibars</string>
+    <string name="aboutWelcome">Welcome to Altimeter</string>
+    <string name="aboutContent">
+    	Altimeter is a basic pressure altimeter.
+	Written by Edward Falk.
+    </string>
+</resources>
