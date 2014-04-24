@@ -26,25 +26,25 @@ class Gauge {
     //private static final String TAG = FlightDeck.TAG;
     private static final int PAD = 5;
 
-    protected int x, y;
-    protected int w, h;			// position in View
-    protected float xt, yt;		// right-bottom of text
-    protected float tw;			// Total text width
-    protected float tw2;		// Width of right-most digits
-    protected float dw;			// Width of a single digit
-    protected float th;			// Text height
-    protected float tpad;		// Text padding
-    protected float value = 0;
-    protected int step;			// increment of lowest-order digits
-    protected int stepDigits;		// how many digits is this?
-    protected int stepMod;		// 10^stepDigits
-    protected boolean allowNeg;		// Allow negative numbers
-    protected int nDigits;
-    protected int[] dbuf;
+    private int x, y;
+    private int w, h;			// position in View
+    private float xt, yt;		// right-bottom of text
+    private float tw;			// Total text width
+    private float tw2;			// Width of right-most digits
+    private float dw;			// Width of a single digit
+    private float th;			// Text height
+    private float tpad;			// Text padding
+    private float value = 0;
+    private int step;			// increment of lowest-order digits
+    private int stepDigits;		// how many digits is this?
+    private int stepMod;		// 10^stepDigits
+    private boolean allowNeg;		// Allow negative numbers
+    private int nDigits;
+    private int[] dbuf;
 
-    protected int arrow;		// arrow: -1=left, 0=none, 1=right
-    protected final Paint paint;
-    protected Path path = new Path();
+    private int arrow;		// arrow: -1=left, 0=none, 1=right
+    private final Paint paint;
+    private Path path = new Path();
 
     /**
      * Create a Gauge object.

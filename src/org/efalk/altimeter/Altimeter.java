@@ -12,6 +12,7 @@ import android.util.Log;
 import android.util.AttributeSet;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Color;
@@ -58,6 +59,25 @@ public class Altimeter extends View {
     private float gx, gy;	// Gauge
     private RectF rk;
     private Gauge gauge;
+
+    // Pointer descriptions. Numbers give as fractions of display width.
+    private static final float[] ptr10000Pts =
+      {.015f,.06f, .015f,.2f, .005f,.21f, .005f,.43f, .03f,.46f,
+      -.03f,.46f, -.005f,.43f, -.005f,.21f, -.015f,.2f, -.015f,.06f,};
+    private static final float[] ptr1000lPts =
+      {0,.06f, 0,.28f, -.04f,.20f, -.02f,.06f};
+    private static final float[] ptr1000rPts =
+      {0,.06f, 0,.28f, .04f,.20f, .02f,.06f};
+    private static final float[] ptr100lPts =
+      {0,.06f, 0,.42f, -.013f,.38f, -.013f,.06f};
+    private static final float[] ptr100rPts =
+      {0,.06f, 0,.42f, .013f,.38f, .013f,.06f};
+
+    private final Path ptr10000 = new Path();
+    private final Path ptr1000l = new Path();
+    private final Path ptr1000r = new Path();
+    private final Path ptr100l = new Path();
+    private final Path ptr100r = new Path();
 
     public Altimeter(Context context) {
 	super(context);
@@ -156,6 +176,24 @@ public class Altimeter extends View {
 	gx = wid * GAUGE_X;
 	gy = hgt * GAUGE_Y;
 	gauge.setXY((int)gx, (int)gy);
+
+	makePath(ptr10000, ptr10000Pts);
+	makePath(ptr1000l, ptr1000lPts);
+	makePath(ptr1000r, ptr1000rPts);
+	makePath(ptr100l, ptr100lPts);
+	makePath(ptr100r, ptr100rPts);
+    }
+
+    private void makePath(Path path, float[] pts) {
+	path.rewind();
+	for (int i=0; i < pts.length; i += 2) {
+	    float x = xc + pts[i] * wid;
+	    float y = yc - pts[i+1] * hgt;
+	    if (i == 0)
+		path.moveTo(x, y);
+	    else
+		path.lineTo(x, y);
+	}
     }
 
     // Main draw entry point
@@ -172,9 +210,23 @@ public class Altimeter extends View {
 	if (inop)
 	    drawInop(canvas);
 	else {
-	    // TODO: draw the hands
+	    drawHand(canvas, ptr10000, Color.WHITE, alt/100000);
+	    drawHand(canvas, ptr1000l, Color.WHITE, alt/10000);
+	    drawHand(canvas, ptr1000r, 0xffcccccc, alt/10000);
+	    drawHand(canvas, ptr100l, Color.WHITE, alt/1000);
+	    drawHand(canvas, ptr100r, 0xffcccccc, alt/1000);
 	}
 	// TODO: look at the invalidated region, only redraw what's necessary.
+    }
+
+    private void drawHand(Canvas canvas, Path path, int color, float frac) {
+	frac -= (int) frac;
+	canvas.save(Canvas.MATRIX_SAVE_FLAG);
+	paint.setColor(color);
+	paint.setStyle(Paint.Style.FILL);
+	canvas.rotate(360*frac, xc, yc);
+	canvas.drawPath(path, paint);
+	canvas.restore();
     }
 
 
