@@ -9,19 +9,20 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Region;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.GestureDetector;
 import android.widget.Button;
-
 import android.util.Log;
 
 /**
@@ -31,6 +32,9 @@ import android.util.Log;
 public class Kollsman extends Activity
 {
     private static final String TAG = AltimeterActivity.TAG;
+
+    // User preferences
+    boolean flingEnabled = true;
 
     private int value;
     private int barom;
@@ -68,6 +72,8 @@ public class Kollsman extends Activity
     @Override
     public void onCreate(Bundle savedState)
     {
+	SharedPreferences sp;
+
 	super.onCreate(savedState);
 
 	// Restore settings from previous invocation.
@@ -77,11 +83,16 @@ public class Kollsman extends Activity
 	else if( savedState != null )
 	    restoreInstanceState(savedState);
 	else {
+	    sp = PreferenceManager.getDefaultSharedPreferences(this);
+	    if( sp != null )
+		recallPreferences(sp);
 	    Intent intent = getIntent();
 	    if( intent != null ) {
 		value = intent.getIntExtra("initial", 1013);
 		barom = intent.getIntExtra("barom", 1013);
 		convert = intent.getFloatExtra("convert", 1.0f);
+		flingEnabled =
+		  intent.getBooleanExtra("flingEnabled", flingEnabled);
 	    }
 	}
 
@@ -121,6 +132,7 @@ public class Kollsman extends Activity
 	value = old.value;
 	barom = old.barom;
 	convert = old.convert;
+	flingEnabled = old.flingEnabled;
     }
 
     /**
@@ -132,6 +144,7 @@ public class Kollsman extends Activity
 	state.putInt("value", value);
 	state.putInt("barom", barom);
 	state.putFloat("convert", convert);
+	state.putBoolean("flingEnabled", flingEnabled);
     }
 
     /**
@@ -141,7 +154,21 @@ public class Kollsman extends Activity
 	value = state.getInt("value");
 	barom = state.getInt("barom");
 	convert = state.getFloat("convert");
+	flingEnabled = state.getBoolean("flingEnabled");
     }
+
+    /**
+     * Load preferences when app starts up. User preferences are loaded
+     * in their own function.
+     */
+    protected void recallPreferences(SharedPreferences sp)
+    {
+	flingEnabled = sp.getBoolean("flingEnabled", flingEnabled);
+    }
+
+
+
+
 
     private void sendResult() {
 	Intent intent = new Intent();

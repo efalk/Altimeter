@@ -24,14 +24,7 @@ public class Globals {
     //private static final String TAG = AltimeterActivity.TAG;
     private static volatile Globals instance = null;
 
-    public static final int UNITS_FT = 0;
-    public static final int UNITS_M = 1;
-    public static final int UNITS_HG = 0;
-    public static final int UNITS_MB = 1;
-
     // User preferences
-    int altUnits = UNITS_FT;
-    int presUnits = UNITS_HG;
     boolean flingEnabled = true;
 
     public static Globals get(Context ctx) {
@@ -56,8 +49,6 @@ public class Globals {
      */
     protected void restoreInstanceState(Bundle state) {
 	flingEnabled = state.getBoolean("flingEnabled");
-	altUnits = state.getInt("altUnits");
-	presUnits = state.getInt("presUnits");
     }
 
     /**
@@ -65,8 +56,6 @@ public class Globals {
      */
     protected void onSaveInstanceState(Bundle state) {
 	state.putBoolean("flingEnabled", flingEnabled);
-	state.putInt("altUnits", altUnits);
-	state.putInt("presUnits", presUnits);
     }
 
     /**
@@ -81,8 +70,6 @@ public class Globals {
 	// restored from strings; PreferencesActivity doesn't support
 	// any other format.
 	flingEnabled = sp.getBoolean("flingEnabled", flingEnabled);
-	altUnits = Integer.parseInt(sp.getString("altUnits", ""+altUnits));
-	presUnits = Integer.parseInt(sp.getString("presUnits", ""+presUnits));
     }
 
     /**

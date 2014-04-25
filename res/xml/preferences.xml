@@ -21,5 +21,17 @@
     android:title="@string/orientation"
     android:entries="@array/orientation_items"
     android:entryValues="@array/orientation_values" />
+  <CheckBoxPreference
+    android:key="keepScreenOn"
+    android:title="@string/keepScreenOn"
+    android:summary="@string/keepScreenOn_summary"
+    android:defaultValue="false"
+    />
+  <CheckBoxPreference
+    android:key="flingEnabled"
+    android:title="@string/fling"
+    android:summary="@string/fling_summary"
+    android:defaultValue="true"
+    />
 
 </PreferenceScreen>

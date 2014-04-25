@@ -12,13 +12,17 @@
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
     <string name="seascape">Seascape</string>
+    <string name="fling">Fling</string>
+    <string name="fling_summary">Enable fling gestures for
+      scrolling. Might not be a good idea in turbulance.</string>
+    <string name="keepScreenOn">Keep screen on</string>
+    <string name="keepScreenOn_summary">Prevent screen from turning off</string>
     <string name="feet">Feet</string>
     <string name="meters">Meters</string>
     <string name="hg">Inches mercury</string>
     <string name="mb">Millibars</string>
     <string name="aboutWelcome">Welcome to Altimeter</string>
-    <string name="aboutContent">
-    	Altimeter is a basic pressure altimeter.
-	Written by Edward Falk.
+    <string name="aboutContent">\nAltimeter is a basic pressure altimeter.
+	Written by Edward Falk. Artwork by Raniawan.
     </string>
 </resources>

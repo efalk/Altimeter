@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 
 public class AltimeterActivity extends Activity implements SensorEventListener
 {
@@ -37,8 +38,8 @@ public class AltimeterActivity extends Activity implements SensorEventListener
     // User preferences
     int altUnits = Altimeter.UNITS_FT;
     int presUnits = Altimeter.UNITS_HG;
-    boolean flingEnabled = true;
     int orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR;
+    boolean keepScreenOn;
 
     @Override
     public void onCreate(Bundle savedState)
@@ -60,8 +61,10 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 		recallPreferences(sp);
 	}
 
+	// Enact preferences
 	altimeter.setAltUnits(altUnits);
 	altimeter.setPresUnits(presUnits);
+	setScreenOn();
 
         sensorManager =
           (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -87,6 +90,9 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 	} catch (Exception e) {}
     }
 
+
+    // Save and restore state
+
     /**
      * Save state before configuration change.
      */
@@ -104,10 +110,10 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 	// Primary state
 	altUnits = old.altUnits;
 	presUnits = old.presUnits;
-	flingEnabled = old.flingEnabled;
 	sensorManager = old.sensorManager;
 	kollsman = old.kollsman;
 	orientation = old.orientation;
+	keepScreenOn = old.keepScreenOn;
     }
 
     /**
@@ -115,11 +121,12 @@ public class AltimeterActivity extends Activity implements SensorEventListener
      */
     @Override
     protected void onSaveInstanceState(Bundle state) {
+	kollsman = altimeter.getKollsman();
         state.putFloat("kollsman", kollsman);
 	state.putInt("altUnits", altUnits);
 	state.putInt("presUnits", presUnits);
-	state.putBoolean("flingEnabled", flingEnabled);
 	state.putInt("orientation", orientation);
+	state.putBoolean("keepScreenOn", keepScreenOn);
     }
 
     /**
@@ -130,8 +137,7 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 	kollsman = state.getFloat("kollsman");
 	altUnits = state.getInt("altUnits");
 	presUnits = state.getInt("presUnits");
-	flingEnabled = state.getBoolean("flingEnabled");
-	orientation = state.getInt("orientation");
+	keepScreenOn = state.getBoolean("keepScreenOn");
     }
 
     /**
@@ -140,7 +146,9 @@ public class AltimeterActivity extends Activity implements SensorEventListener
      */
     private void storePreferences(SharedPreferences.Editor sp)
     {
+	kollsman = altimeter.getKollsman();
         sp.putFloat("kollsman", kollsman);
+	sp.commit();
     }
 
     /**
@@ -165,10 +173,16 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 	 */
 	altUnits = Integer.parseInt(sp.getString("altUnits", ""+altUnits));
 	presUnits = Integer.parseInt(sp.getString("presUnits", ""+presUnits));
+	keepScreenOn = sp.getBoolean("keepScreenOn", keepScreenOn);
 	orientation = Integer.parseInt(sp.getString("orientation",
 	  ""+ActivityInfo.SCREEN_ORIENTATION_SENSOR));
 	if (getRequestedOrientation() != orientation)
 	    setRequestedOrientation(orientation);
+    }
+
+    private void setScreenOn() {
+	int f = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+	getWindow().setFlags(keepScreenOn ? f : 0, f);
     }
 
 
@@ -261,6 +275,7 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 	    updatePreferences(sp);
 	    altimeter.setAltUnits(altUnits);
 	    altimeter.setPresUnits(presUnits);
+	    setScreenOn();
 	    break;
 	  case MENU_KOLLSMAN:
 	    if (data != null) {

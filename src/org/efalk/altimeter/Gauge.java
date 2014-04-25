@@ -26,7 +26,7 @@ class Gauge {
     //private static final String TAG = FlightDeck.TAG;
     private static final int PAD = 5;
 
-    private int x, y;
+    private int y;
     private int w, h;			// position in View
     private float xt, yt;		// right-bottom of text
     private float tw;			// Total text width
@@ -39,8 +39,6 @@ class Gauge {
     private int stepDigits;		// how many digits is this?
     private int stepMod;		// 10^stepDigits
     private boolean allowNeg;		// Allow negative numbers
-    private int nDigits;
-    private int[] dbuf;
 
     private int arrow;		// arrow: -1=left, 0=none, 1=right
     private final Paint paint;
@@ -89,8 +87,6 @@ class Gauge {
 	h = (int)(th + PAD*2);
 	if (arrow != 0) w += h/2;
 
-	for (nDigits = 0; maxval > 0; ++nDigits) maxval /= 10;
-	dbuf = new int[maxval];
 	for (stepDigits = 0; step > 0; ++stepDigits) step /= 10;
 	stepMod = 1;
 	for (int i=0; i<stepDigits; ++i) stepMod *= 10;
@@ -109,7 +105,6 @@ class Gauge {
      */
     public void setXY(int x, int y) {
 	if (arrow < 0) x += h/2;
-	this.x = x;
 	this.y = y;
 
 	// right-center of text
