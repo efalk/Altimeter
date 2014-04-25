@@ -24,7 +24,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
 
 public class AltimeterActivity extends Activity implements SensorEventListener
@@ -64,6 +64,11 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 	// Enact preferences
 	altimeter.setAltUnits(altUnits);
 	altimeter.setPresUnits(presUnits);
+	altimeter.setOnClickListener(new View.OnClickListener() {
+	    public void onClick(View v) {
+		getKollsman();
+	    }
+	});
 	setScreenOn();
 
         sensorManager =
@@ -292,9 +297,7 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 
 
 
-    @Override
-    public final boolean onTouchEvent(MotionEvent event) {
-	if (event.getAction() != MotionEvent.ACTION_DOWN) return false;
+    private void getKollsman() {
 	Log.d(TAG, "Bring up Kollsman window");
 	float k = altimeter.getKollsman();
 	float p = altimeter.getPressure();
@@ -307,7 +310,6 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 	if (altUnits == Altimeter.UNITS_FT)
 	    altConv = 1.0f/Altimeter.METER_FT;
 	Kollsman.launch(this, MENU_KOLLSMAN, (int)(k+.5), (int)(p+.5), altConv);
-	return true;
     }
 
     private void enableSensors() {
