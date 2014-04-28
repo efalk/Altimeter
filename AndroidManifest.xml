@@ -42,5 +42,5 @@
             </intent-filter>
         </activity>
     </application>
-    <uses-sensor android:name="android.hardware.sensor.barometer" />
+    <uses-feature android:name="android.hardware.sensor.barometer" />
 </manifest> 
