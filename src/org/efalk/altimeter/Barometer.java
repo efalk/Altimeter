@@ -50,7 +50,7 @@ public class Barometer {
     float alt = 0;
     float vsi = 0;
     long lastTs = 0;
-    long lastTime;
+    long lastTime = 0;
 
     public void resetKollsman() {
 	kollsman = ATM;
