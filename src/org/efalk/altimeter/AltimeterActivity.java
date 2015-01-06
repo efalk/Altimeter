@@ -61,7 +61,7 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 		recallPreferences(sp);
 	}
 
-	// Enact preferences
+	// Apply preferences
 	altimeter.setAltUnits(altUnits);
 	altimeter.setPresUnits(presUnits);
 	altimeter.setOnClickListener(new View.OnClickListener() {
@@ -286,7 +286,7 @@ public class AltimeterActivity extends Activity implements SensorEventListener
 	    if (data != null) {
 		float f = data.getIntExtra("value", 1013);
 		if (f != 0) {
-		    if (altUnits == Altimeter.UNITS_HG)
+		    if (presUnits == Altimeter.UNITS_HG)
 			f *= .01 / Altimeter.HG_MB;
 		    altimeter.setKollsman(f);
 		}
